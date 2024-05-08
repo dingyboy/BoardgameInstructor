@@ -15,4 +15,3 @@ Helpful commands:
 pip list - shows all the installed packages
 pip freeze > requirements.txt - moves all the packages into requirements.txt file
 pip install -r requirements.txt - reads the requirements file and installs the packages
-
