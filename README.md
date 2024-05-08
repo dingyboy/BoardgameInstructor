@@ -1,6 +1,8 @@
 # Boardgame Instructor
 Chatbot that helps the user with board game instructions.
 
+Python 3.11.5
+
 Creating virtual env:
 pip install virtualenv
 python -m venv bgenv
