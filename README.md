@@ -19,3 +19,25 @@ pip freeze > requirements.txt - moves all the packages into requirements.txt fil
 pip install -r requirements.txt - reads the requirements file and installs the packages
 
 https://github.com/dingyboy/BoardgameInstructor
+
+Chunking Strategy (Semantic Chunking):
+https://python.langchain.com/v0.1/docs/modules/data_connection/document_transformers/semantic-chunker/ 
+
+TODO: 
+Need to convert pdf to text 
+
+Need to do Semantic Chunking
+
+Need to convert chunk into text-embedding-3-small (https://platform.openai.com/docs/guides/embeddings/what-are-embeddings)
+
+Need to insert into mongoDB vector search
+
+Need to query vector DB
+
+Need to build UI search bar
+
+Need to build UI chat window
+
+Need to ensure mobile compatibility 
+
+

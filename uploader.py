@@ -48,9 +48,9 @@ item_2 = {
   "price" : 36,
   "item_description" : "brown country eggs"
 }
-client = connectClient()
-pingClient(client)
-db = connectDatabase(client, 'BoardgameInstructions')
-collection = connectCollection(db, 'BGInstruct')
-insertItems(collection, [item_1, item_2])
+# client = connectClient()
+# pingClient(client)
+# db = connectDatabase(client, 'BoardgameInstructions')
+# collection = connectCollection(db, 'BGInstruct')
+# insertItems(collection, [item_1, item_2])
 
