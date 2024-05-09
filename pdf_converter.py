@@ -1,25 +1,35 @@
-# importing required modules 
-from pypdf import PdfReader 
-  
-# creating a pdf reader object 
-reader = PdfReader('railroad_ink_rules.pdf') 
-  
-# printing number of pages in pdf file 
-print(len(reader.pages)) 
-  
-# getting a specific page from the pdf file 
-page = reader.pages[0] 
-  
-# extracting text from page 
-text = page.extract_text() 
-print(text) 
+# # Import libraries
+# import platform
+# from tempfile import TemporaryDirectory
+# from pathlib import Path
+ 
+# import pytesseract
+# from pdf2image import convert_from_path
+# from PIL import Image
+ 
 
-page_2 = reader.pages[1].extract_text()
-print(page_2)
+# print(platform.system())
 
-page_3 = reader.pages[2].extract_text()
-print(page_3)
+# pytesseract.pytesseract.tesseract_cmd = (
+#     r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# )
+# # Path of the Input pdf
+# PDF_file = Path(r"railroad_ink_rules.pdf")
+ 
+# # Store all the pages of the PDF in a variable
+# image_file_list = []
+ 
+# text_file = Path("out_text.txt")
 
-page_4 = reader.pages[3].extract_text()
-print(page_4)
 
+# import module
+from pdf2image import convert_from_path
+ 
+ 
+# Store Pdf with convert_from_path function
+images = convert_from_path('railroad_ink_rules.pdf')
+ 
+for i in range(len(images)):
+   
+      # Save pages as images in the pdf
+    images[i].save('page'+ str(i) +'.jpg', 'JPEG')
