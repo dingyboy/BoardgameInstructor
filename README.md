@@ -24,7 +24,8 @@ Chunking Strategy (Semantic Chunking):
 https://python.langchain.com/v0.1/docs/modules/data_connection/document_transformers/semantic-chunker/ 
 
 TODO: 
-Need to convert pdf to text 
+Need to convert pdf to text - running into an issue where the text contain special character and numbers. Also running into an issue where the text does not have the images. This creates an explanation without pictures.
+This is one potential solution to clean up the text: https://www.geeksforgeeks.org/python-reading-contents-of-pdf-using-ocr-optical-character-recognition/ 
 
 Need to do Semantic Chunking
 
