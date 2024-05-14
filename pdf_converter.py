@@ -1,32 +1,13 @@
-# # Import libraries
-# import platform
-# from tempfile import TemporaryDirectory
-# from pathlib import Path
- 
 import pytesseract
-# from pdf2image import convert_from_path
 from PIL import Image
 import os
-
-# print(platform.system())
-
-# pytesseract.pytesseract.tesseract_cmd = (
-#     r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-# )
-# # Path of the Input pdf
-# PDF_file = Path(r"railroad_ink_rules.pdf")
- 
-# # Store all the pages of the PDF in a variable
-# image_file_list = []
- 
-# text_file = Path("out_text.txt")
 
 
 # import module
 from pdf2image import convert_from_path
 parent_dir = os.environ.get('BOARDGAME_ASSET_PATH')
 
- 
+# PDF to Text Conversion
 def create_folder(bg_name='railroad_ink'):
   print("Start: create_folder " + bg_name)
   directory = bg_name

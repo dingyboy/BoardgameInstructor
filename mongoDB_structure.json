@@ -2,6 +2,7 @@
     "name": "",
     "rule_description":"",
     "rule_embedding":"",
-    "image_link":""
+    "image_link":"",
+    "page_number": -1
 
 }

@@ -46,4 +46,4 @@ for bucket in response['Buckets']:
     print(f'  {bucket["Name"]}')
 
 # upload_image('railroad_ink', client)
-download_image('railroad_ink', client)
+# download_image('railroad_ink', client)
