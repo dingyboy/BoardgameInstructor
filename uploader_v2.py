@@ -112,7 +112,7 @@ def format_data(bg_name, openai_client, path_container):
         for i in range(len(path_container)):
             f = open(PARENT_DIR + '/' + bg_name + '/' + bg_name + '_page'+ str(i) +'.txt')
             current_text = f.read()
-
+            print("Length Check: " + bg_name + " page " + str(i) + ": " + str(len(current_text)))
             if (len(current_text) > 6000):
                 # we need to do a split here where we split the page into halves until it is less than 6000
                 #  FUTURE TODO for bigger boardgame rules. right now this is just whatever until later 
@@ -173,7 +173,7 @@ def insertItems(collection, items):
 def delete_folder(bg_name='splendor'):
     shutil.rmtree(PARENT_DIR + '/' + bg_name)
 
-def generate_asset(bg_name='railroad_ink'):
+def generate_asset(bg_name='cascadia'):
 
     print("Start: generate_asset " + bg_name)
     # Convert pdf to jpeg and

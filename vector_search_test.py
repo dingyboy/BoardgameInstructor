@@ -32,7 +32,8 @@ def create_pipeline(embedding):
       'path': 'rule_embedding', 
       'queryVector': embedding, 
       'numCandidates': 150, 
-      'limit': 3
+      'filter': { "name": { "$eq": "cascadia" }, },
+      'limit': 20
     }
   }, {
     '$project': {
