@@ -43,9 +43,6 @@ if prompt := st.chat_input("What can I help you with?"):
     )
 
     response = openai_response.choices[0].message.content
-    print('response test')
-    print(response)
-    # response = f"Echo: {prompt}"
     with st.chat_message("assistant"):
         st.markdown(response)
     
