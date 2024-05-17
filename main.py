@@ -1,43 +1,50 @@
 import streamlit as st
 import os
+import numpy as np
+from openai import OpenAI
+from dotenv import load_dotenv
 
+load_dotenv()
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+
+client_openai = OpenAI(api_key=OPENAI_API_KEY)
+
+
+boardgame_list = ('Railroad Ink', 'Cascadia')
 
 col1, col2 = st.columns(2)
-
 with col1:
     st.title('Boardgame Buddy') # Set Title of the webapp
 with col2:
     st.image('boardgame_buddy.png')
 
-# choice1 = st.number_input('Enter First number') #Accepts a number input
-# choice2 = st.number_input('Enter Second number')
-# choice3 = st.number_input('Enter Third number')
-if 'entrance_greeting' not in st.session_state:
-    st.session_state['entrance_greeting'] = 'Slider to enter.'
+option = st.selectbox('Which pesky boardgame do you need help with?',
+        boardgame_list)
 
-slider_value = st.slider("", 0, 100, 0)
-st.write(st.session_state.entrance_greeting)
-if (slider_value > 25):
-    st.session_state.entrance_greeting = "Wheeee!"
-if (slider_value > 50):
-    st.session_state.entrance_greeting = 'Whooaa! :o'
-if (slider_value > 75):
-    st.session_state.entrance_greeting = 'Ahhhhh! :D'
-if(slider_value > 95):
-    st.session_state.entrance_greeting = 'Here we go! :3'
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-# print(os.environ.get('OPENAI_API_KEY'))
-# from openai import OpenAI
-# client = OpenAI(    
-#         api_key=os.environ.get('OPENAI_API_KEY')
-#     )
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-# completion = client.chat.completions.create(
-#     model="gpt-3.5-turbo",
-#     messages=[
-#         {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
-#         {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
-#     ]
-# )
+if prompt := st.chat_input("What can I help you with?"):
+    with st.chat_message("user"):
+        st.markdown(prompt)
+    st.session_state.messages.append({"role":"user", "content":prompt})
 
-# print(completion.choices[0].message)
+
+    response = client.chat.completions.creat(
+        model="gpt-3.5-turbo",
+        messages= [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
+
+
+    )
+    # response = f"Echo: {prompt}"
+    with st.chat_message("assistant"):
+        st.markdown(response)
+    
+    st.session_state.messages.append({"role": "assistant", "content": response})
