@@ -4,8 +4,9 @@ import numpy as np
 from openai import OpenAI
 from dotenv import load_dotenv
 import json
-load_dotenv()
+from auxiliary import connect_openai, generate_embedding, request_response, setup_mongo_connection, fetch_from_mongo
 
+load_dotenv()
 
 BOARDGAME_LIST = []
 BOARDGAME_DISPLAY_LIST = []
@@ -30,11 +31,6 @@ OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
 client_openai = OpenAI(api_key=OPENAI_API_KEY)
 
-
-boardgame_list = ('Railroad Ink', 'Cascadia')
-model_list =('gpt-3.5-turbo', 'gpt-4o')
-
-
 col1, col2 = st.columns(2)
 with col1:
     st.title('Board Game Buddy') # Set Title of the webapp
@@ -57,26 +53,65 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 if prompt := st.chat_input("What can I help you with?"):
-    with st.chat_message("user"):
-        st.markdown(prompt)
-    st.session_state.messages.append({"role":"user", "content":prompt})
+    try:
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        st.session_state.messages.append({"role":"user", "content":prompt})
 
-    # need to fetch from MongoDB Database here
-    # based on the promtp here: prompt
-    # maybe we have a checkbox to ask the user if we want to use images or not
+        # need to fetch from MongoDB Database here
+        # based on the promtp here: prompt
+        # maybe we have a checkbox to ask the user if we want to use images or not
 
-    openai_response = client_openai.chat.completions.create(
-        model=model_option,
-        messages= [
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": prompt}
-        ]
-    )
+        openai_client = connect_openai()
 
-    response = openai_response.choices[0].message.content
-    with st.chat_message("assistant"):
-        st.markdown(response)
-    
-    st.session_state.messages.append({"role": "assistant", "content": response})
 
+        embedding = generate_embedding(openai_client)
+
+
+        boardgame_display_key = "display_name"
+        boardgame_database_key = "database_name"
+        boardgame_database_name = None
+        for game in BOARDGAME_LIST:
+            if game.get(boardgame_display_key) == boardgame_option:
+                boardgame_database_name = game.get(boardgame_database_key)
+                break
+        
+        print(boardgame_database_name)
+        mongo_collection = setup_mongo_connection()
+
+        # print(BOARDGAME_LIST)
+
+        mongo_response = None
+        if boardgame_database_name != None:
+            mongo_response = fetch_from_mongo(mongo_collection, embedding, boardgame_database_name)
+        else:
+            # TODO: Need to have a response here where it just says please refresh and try again
+            print("Was not able to find boardgame name or some other internal error :'(")
+
+        enhanced_prompt = prompt 
+
+        for response in mongo_response:
+            enhanced_prompt += " *** " + response['rule_description'] + " !!! "
+
+        # TODO: Need to check if gpt4o is enabled and if it is we need to fetch images and use them as part of the response 
+
+        # openai_response = client_openai.chat.completions.create(
+        #     model=model_option,
+        #     messages= [
+        #         {"role": "system", "content": SYSTEM_PROMPT},
+        #         {"role": "user", "content": prompt}
+        #     ]
+        # )        
+        openai_response = request_response(openai_client, model_option, enhanced_prompt)
+
+        response = openai_response.choices[0].message.content
+        with st.chat_message("assistant"):
+            st.markdown(response)
+        
+        st.session_state.messages.append({"role": "assistant", "content": response})
+    except Exception as e:
+        response = "We apologize but an issue occurred please try again later. :'("
+        with st.chat_message("assistant"):
+            st.markdown(response)
+        st.session_state.messages.append({"role": "assistant", "content": response})
 

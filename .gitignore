@@ -2,3 +2,4 @@
 .env
 references.txt
 /boardgame_asset
+__pycache__
