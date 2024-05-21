@@ -39,7 +39,7 @@ with col2:
 
 boardgame_option = st.selectbox('Which pesky boardgame do you need help with?', BOARDGAME_DISPLAY_LIST)
 model_option = st.selectbox('Which model would you like to use?', MODEL_LIST)
-
+# TODO need another check box here to do an image pull and show function
 
 if model_option == 'gpt-4o':
     enable_image = st.checkbox("Activate Advanced AI Visual Identification")
