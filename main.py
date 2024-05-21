@@ -44,6 +44,11 @@ with col2:
 boardgame_option = st.selectbox('Which pesky boardgame do you need help with?', BOARDGAME_DISPLAY_LIST)
 model_option = st.selectbox('Which model would you like to use?', MODEL_LIST)
 
+
+if model_option == 'gpt-4o':
+    enable_image = st.checkbox("Activate Advanced AI Visual Identification")
+
+
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
