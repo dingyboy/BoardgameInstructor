@@ -2,6 +2,8 @@ import pymongo
 import os
 from openai import OpenAI
 import json
+import boto3
+from botocore.exceptions import ClientError
 
 
 SYSTEM_PROMPT = ""
@@ -14,6 +16,12 @@ OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 MONGO_DB_CONNECTION_URL = os.environ.get('MONGO_DB_CONNECTION_URL')
 MONGO_DB_DATABASE_NAME = os.environ.get('MONGO_DB_DATABASE_NAME')
 MONGO_DB_COLLECTION_NAME = os.environ.get('MONGO_DB_COLLECTION_NAME')
+
+AWS_ACCESS_ID = os.environ.get("AWS_ACCESS_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_BG_BUCKET_NAME = os.environ.get('AWS_BG_BUCKET_NAME')
+BG_ASSET_PATH = os.environ.get('BOARDGAME_ASSET_PATH')
+
 
 def connect_openai():
     try: 
@@ -109,3 +117,32 @@ def fetch_from_mongo(collection, embedding, boardgame_name):
     except Exception as e:
         print(e)
 
+
+def connect_bucket():
+    try: 
+        client = boto3.client('s3', region_name='us-east-2',              
+                                aws_access_key_id=AWS_ACCESS_ID,
+                                aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+        return client
+    except Exception as e:
+        print(e)
+        return False
+
+def download_image(bg_name, client):
+    try:
+        client.download_file(AWS_BG_BUCKET_NAME, "/" + bg_name + "/" +bg_name + '_page0.jpg', "test.jpg")
+    except ClientError as e:
+        print(e)
+    
+def fetch_image_url(client, image_path, expiration=3600):
+    try:
+        response = client.generate_presigned_url('get_object',
+                                                        Params={'Bucket': AWS_BG_BUCKET_NAME,
+                                                                'Key':  image_path},
+                                                        ExpiresIn=expiration)
+    except ClientError as e:
+        print(e)
+        return None
+
+    # The response contains the presigned URL
+    return response

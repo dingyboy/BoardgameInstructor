@@ -7,6 +7,7 @@
 # convert the text into vector search embedding xx
 # upload file to mongoDB 
 # need to upload image url, vectordb, and text information
+import argparse
 
 import pytesseract
 from PIL import Image
@@ -20,7 +21,6 @@ from pymongo.mongo_client import MongoClient
 PARENT_DIR = os.environ.get('BOARDGAME_ASSET_PATH')
 ACCESS_ID = os.environ.get("AWS_ACCESS_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
-BG_ASSET_PATH = os.environ.get('BOARDGAME_ASSET_PATH')
 AWS_BG_BUCKET_NAME = os.environ.get('AWS_BG_BUCKET_NAME')
 EMBEDDING_MODEL = os.environ.get('EMBEDDING_MODEL')
 MONGO_DB_CONNECTION_URL = os.environ.get('MONGO_DB_CONNECTION_URL')
@@ -92,7 +92,7 @@ def upload_image(bg_name, client, num_images):
         for i in range(num_images):
             s3_bucket_path = "/" + bg_name + "/" +bg_name + '_page' + str(i) + '.jpg'
             path_container.append(s3_bucket_path)
-            response = client.upload_file(BG_ASSET_PATH + '/' + bg_name + '/' + bg_name + '_page0.jpg', AWS_BG_BUCKET_NAME,  s3_bucket_path)
+            response = client.upload_file(PARENT_DIR + '/' + bg_name + '/' + bg_name + '_page' + str(i) + '.jpg', AWS_BG_BUCKET_NAME,  s3_bucket_path)
         return path_container
     except ClientError as e:
         print(e)
@@ -202,5 +202,8 @@ def generate_asset(bg_name='cascadia'):
 
     print("Finish: generate_asset " + bg_name)
 
-generate_asset()
+parser = argparse.ArgumentParser()
+parser.add_argument('--bg', type=str)
+args = parser.parse_args()
+generate_asset(bg_name=args.bg)
 

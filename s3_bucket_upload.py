@@ -10,7 +10,6 @@ AWS_BG_BUCKET_NAME = os.environ.get('AWS_BG_BUCKET_NAME')
 
 
 def connect_bucket():
-
     try: 
         client = boto3.client('s3', region_name='us-east-2',              
                                 aws_access_key_id=ACCESS_ID,

@@ -4,7 +4,7 @@ import numpy as np
 from openai import OpenAI
 from dotenv import load_dotenv
 import json
-from auxiliary import connect_openai, generate_embedding, request_response, setup_mongo_connection, fetch_from_mongo
+from auxiliary import connect_openai, generate_embedding, request_response, setup_mongo_connection, fetch_from_mongo, connect_bucket, fetch_image_url
 
 load_dotenv()
 
@@ -40,6 +40,8 @@ with col2:
 boardgame_option = st.selectbox('Which pesky boardgame do you need help with?', BOARDGAME_DISPLAY_LIST)
 model_option = st.selectbox('Which model would you like to use?', MODEL_LIST)
 # TODO need another check box here to do an image pull and show function
+
+display_instructions_enabled = st.checkbox("Display Board Game Instruction Images?")
 
 if model_option == 'gpt-4o':
     enable_image = st.checkbox("Activate Advanced AI Visual Identification")
@@ -90,9 +92,24 @@ if prompt := st.chat_input("What can I help you with?"):
 
         enhanced_prompt = prompt 
 
+
+        image_s3_url = []
         for response in mongo_response:
+            print(response['image_path'])
+            image_s3_url.append(response['image_path'])
             enhanced_prompt += " *** " + response['rule_description'] + " !!! "
 
+        # TODO: Need to check if display images is enabled, if so we need to fetch images from s3 bucket
+        image_url_list = []
+        if display_instructions_enabled:
+            s3_client = connect_bucket()
+
+            for image_path in image_s3_url:
+
+                image_url_list.append(fetch_image_url(s3_client, image_path))
+            # print(image_url_test)
+            # st.image(image_url_test)
+        print(image_url_list)
         # TODO: Need to check if gpt4o is enabled and if it is we need to fetch images and use them as part of the response 
 
         # openai_response = client_openai.chat.completions.create(
@@ -107,6 +124,8 @@ if prompt := st.chat_input("What can I help you with?"):
         response = openai_response.choices[0].message.content
         with st.chat_message("assistant"):
             st.markdown(response)
+            for image_url in image_url_list:
+                st.image(image_url)
         
         st.session_state.messages.append({"role": "assistant", "content": response})
     except Exception as e:
