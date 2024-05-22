@@ -51,16 +51,39 @@ def request_response(openai_client, model_option, prompt):
             messages= [
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": prompt}
-            ]
+            ],
+            max_tokens=500,
+
         )
 
         return openai_response 
     except Exception as e:
         print(e)
 
-def request_with_image_reponse(openai_client, modle_option, image_url):
-    #Need to figure out how to incorporate the image here
-    return None
+def request_with_image_response(openai_client, model_option, prompt, image_url):
+    try:
+        openai_response = openai_client.chat.completions.create(
+            model=model_option,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {
+                            "type": "image_url",
+                            "image_url": {'url': image_url }
+                        },
+                    ],
+                }
+            ],
+            max_tokens=500,
+        )
+        return openai_response 
+    except Exception as e:
+        print("error here?")
+        print(e)
 
 def connect_mongo_client():
     try:

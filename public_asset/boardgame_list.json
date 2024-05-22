@@ -2,10 +2,14 @@
 [
     {
         "database_name":"railroad_ink",
-        "display_name": "Railroad Ink 3"
+        "display_name": "Railroad Ink Blue Edition"
     },    
     {
         "database_name":"cascadia",
-        "display_name": "Cascadia 2"
+        "display_name": "Cascadia"
+    }
+    {
+        "database_name":"nemesis",
+        "display_name": "Nemesis"
     }
 ]

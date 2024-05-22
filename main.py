@@ -4,7 +4,7 @@ import numpy as np
 from openai import OpenAI
 from dotenv import load_dotenv
 import json
-from auxiliary import connect_openai, generate_embedding, request_response, setup_mongo_connection, fetch_from_mongo, connect_bucket, fetch_image_url
+from auxiliary import connect_openai, generate_embedding, request_response, setup_mongo_connection, fetch_from_mongo, connect_bucket, fetch_image_url, request_with_image_response
 
 load_dotenv()
 
@@ -42,13 +42,24 @@ st.write("Disclaimer, this is currently in alpha and the AI will lie and make th
 
 boardgame_option = st.selectbox('Which pesky boardgame do you need help with?', BOARDGAME_DISPLAY_LIST)
 model_option = st.selectbox('Which model would you like to use?', MODEL_LIST)
+
 # TODO need another check box here to do an image pull and show function
 
-display_instructions_enabled = st.checkbox("Display Board Game Instruction Images?")
+
+if "display_instructions_enabled" not in st.session_state:
+    st.session_state.display_instructions_enabled = False
+st.session_state.display_instructions_enabled = st.checkbox("Display Board Game Instruction Images?")
+
+
+if "enable_image_recognition" not in st.session_state:
+    st.session_state.enable_image_recognition = False
+
+
 
 if model_option == 'gpt-4o':
-    enable_image = st.checkbox("Activate Advanced AI Visual Identification")
-
+    st.session_state.enable_image_recognition = st.checkbox("Activate Advanced AI Visual Identification")
+else:
+    st.session_state.enable_image_recognition = False
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -105,7 +116,7 @@ if prompt := st.chat_input("What can I help you with?"):
             enhanced_prompt += " *** " + response['rule_description'] + " !!! "
 
         image_url_list = []
-        if display_instructions_enabled:
+        if st.session_state.display_instructions_enabled or st.session_state.enable_image_recognition:
             s3_client = connect_bucket()
 
             for image_path in image_s3_url:
@@ -115,19 +126,26 @@ if prompt := st.chat_input("What can I help you with?"):
             # st.image(image_url_test)
         print(image_url_list)
         # TODO: Need to check if gpt4o is enabled and if it is we need to fetch images and use them as part of the response 
-            
-        openai_response = request_response(openai_client, model_option, enhanced_prompt)
+        openai_response = None
 
+        print(image_url_list[0])
+        if st.session_state.enable_image_recognition:
+            openai_response = request_with_image_response(openai_client, model_option, enhanced_prompt, image_url_list[0])
+        else:
+            openai_response = request_response(openai_client, model_option, enhanced_prompt)
+        print(openai_response)
         response = openai_response.choices[0].message.content
         with st.chat_message("assistant"):
             st.markdown(response)
-            for image_url in image_url_list:
-               with st.expander('Reference Image Below', expanded=True):
-                   st.image(image_url)
+            if st.session_state.display_instructions_enabled:
+                for image_url in image_url_list:
+                    with st.expander('Reference Image Below', expanded=True):
+                        st.image(image_url)
         
         st.session_state.messages.append({"role": "assistant", "content": response})
-        for image_url in image_url_list:
-            st.session_state.messages.append({"role": "assistant", "content": image_url})
+        if st.session_state.display_instructions_enabled:
+            for image_url in image_url_list:
+                st.session_state.messages.append({"role": "assistant", "content": image_url})
     except Exception as e:
         response = "We apologize but an issue occurred please try again later. :'("
         with st.chat_message("assistant"):
