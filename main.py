@@ -37,6 +37,9 @@ with col1:
 with col2:
     st.image('./public_asset/boardgame_buddy.png')
 
+st.write("Disclaimer, this is currently in alpha and the AI will lie and make things up so be cautious and happy testing. :)")
+
+
 boardgame_option = st.selectbox('Which pesky boardgame do you need help with?', BOARDGAME_DISPLAY_LIST)
 model_option = st.selectbox('Which model would you like to use?', MODEL_LIST)
 # TODO need another check box here to do an image pull and show function
@@ -52,7 +55,12 @@ if "messages" not in st.session_state:
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+
+        if 'https://bg-instructor-rule-storage' in message['content']:
+            with st.expander('Reference Image Below', expanded=False):
+                st.image(message['content'])
+        else:
+            st.markdown(message["content"])
 
 if prompt := st.chat_input("What can I help you with?"):
     try:
@@ -81,25 +89,21 @@ if prompt := st.chat_input("What can I help you with?"):
         print(boardgame_database_name)
         mongo_collection = setup_mongo_connection()
 
-        # print(BOARDGAME_LIST)
 
         mongo_response = None
         if boardgame_database_name != None:
             mongo_response = fetch_from_mongo(mongo_collection, embedding, boardgame_database_name)
         else:
-            # TODO: Need to have a response here where it just says please refresh and try again
             print("Was not able to find boardgame name or some other internal error :'(")
 
         enhanced_prompt = prompt 
 
-
         image_s3_url = []
         for response in mongo_response:
-            print(response['image_path'])
-            image_s3_url.append(response['image_path'])
+            if response['image_path'] not in image_s3_url:
+                image_s3_url.append(response['image_path'])
             enhanced_prompt += " *** " + response['rule_description'] + " !!! "
 
-        # TODO: Need to check if display images is enabled, if so we need to fetch images from s3 bucket
         image_url_list = []
         if display_instructions_enabled:
             s3_client = connect_bucket()
@@ -111,26 +115,23 @@ if prompt := st.chat_input("What can I help you with?"):
             # st.image(image_url_test)
         print(image_url_list)
         # TODO: Need to check if gpt4o is enabled and if it is we need to fetch images and use them as part of the response 
-
-        # openai_response = client_openai.chat.completions.create(
-        #     model=model_option,
-        #     messages= [
-        #         {"role": "system", "content": SYSTEM_PROMPT},
-        #         {"role": "user", "content": prompt}
-        #     ]
-        # )        
+            
         openai_response = request_response(openai_client, model_option, enhanced_prompt)
 
         response = openai_response.choices[0].message.content
         with st.chat_message("assistant"):
             st.markdown(response)
             for image_url in image_url_list:
-                st.image(image_url)
+               with st.expander('Reference Image Below', expanded=True):
+                   st.image(image_url)
         
         st.session_state.messages.append({"role": "assistant", "content": response})
+        for image_url in image_url_list:
+            st.session_state.messages.append({"role": "assistant", "content": image_url})
     except Exception as e:
         response = "We apologize but an issue occurred please try again later. :'("
         with st.chat_message("assistant"):
             st.markdown(response)
         st.session_state.messages.append({"role": "assistant", "content": response})
+
 
