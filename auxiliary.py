@@ -117,7 +117,7 @@ def fetch_from_mongo(collection, embedding, boardgame_name):
     pipeline = [
     {
         '$vectorSearch': {
-            'index': 'bg_embedding_search', 
+            'index': 'vector_index', 
             'path': 'rule_embedding', 
             'queryVector': embedding, 
             'numCandidates': 150, 

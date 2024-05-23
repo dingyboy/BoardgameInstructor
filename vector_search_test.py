@@ -28,7 +28,7 @@ def create_pipeline(embedding):
   pipeline = [
   {
     '$vectorSearch': {
-      'index': 'bg_embedding_search', 
+      'index': 'vector_index', 
       'path': 'rule_embedding', 
       'queryVector': embedding, 
       'numCandidates': 150, 

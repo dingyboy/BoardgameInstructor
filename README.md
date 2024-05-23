@@ -42,3 +42,6 @@ Need to build UI chat window
 Need to ensure mobile compatibility 
 
 
+One thing that is a pain to implement is we need to create name as an index in the db collection
+then we need to create a filter in the atlas vector search index.
+https://www.mongodb.com/docs/atlas/atlas-vector-search/tutorials/vector-search-tutorial/#define-the-atlas-vector-search-index.-1

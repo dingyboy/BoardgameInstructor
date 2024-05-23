@@ -49,7 +49,7 @@ model_option = st.selectbox('Which model would you like to use?', MODEL_LIST)
 if "display_instructions_enabled" not in st.session_state:
     st.session_state.display_instructions_enabled = False
 st.session_state.display_instructions_enabled = st.checkbox("Display Board Game Instruction Images?")
-
+print(st.session_state.display_instructions_enabled)
 
 if "enable_image_recognition" not in st.session_state:
     st.session_state.enable_image_recognition = False
@@ -108,15 +108,17 @@ if prompt := st.chat_input("What can I help you with?"):
             print("Was not able to find boardgame name or some other internal error :'(")
 
         enhanced_prompt = prompt 
-
+        print('mongo response', mongo_response)
         image_s3_url = []
         for response in mongo_response:
+            print("response test", response)
             if response['image_path'] not in image_s3_url:
                 image_s3_url.append(response['image_path'])
             enhanced_prompt += " *** " + response['rule_description'] + " !!! "
 
         image_url_list = []
         if st.session_state.display_instructions_enabled or st.session_state.enable_image_recognition:
+            print("test checker")
             s3_client = connect_bucket()
 
             for image_path in image_s3_url:
