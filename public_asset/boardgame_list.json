@@ -15,5 +15,33 @@
     {
         "database_name":"cosmic_encounter",
         "display_name": "Cosmic Encounter"
-    }
+    },
+    {
+        "database_name":"scythe",
+        "display_name": "Scythe"
+    },
+    {
+        "database_name":"kemet",
+        "display_name": "Kemet"
+    },
+    {
+        "database_name":"northgard",
+        "display_name": "Northgard"
+    },
+    {
+        "database_name":"bohnanza",
+        "display_name": "Bohnanza"
+    },
+    {
+        "database_name":"avalon",
+        "display_name": "Avalon"
+    },
+    {
+        "database_name":"wandering_tower",
+        "display_name": "Wandering Tower"
+    },
+    {
+        "database_name":"ethnos",
+        "display_name": "Ethnos"
+    },
 ]

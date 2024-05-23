@@ -45,3 +45,6 @@ Need to ensure mobile compatibility
 One thing that is a pain to implement is we need to create name as an index in the db collection
 then we need to create a filter in the atlas vector search index.
 https://www.mongodb.com/docs/atlas/atlas-vector-search/tutorials/vector-search-tutorial/#define-the-atlas-vector-search-index.-1
+
+Uploading a file cmd: python uploader_v2.py --bg ethnos 
+You need to specify the name of the boardgame you want to upload but make sure to save it in local first.
