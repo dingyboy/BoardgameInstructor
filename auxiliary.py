@@ -46,6 +46,7 @@ def generate_embedding(openai_client):
 
 def request_response(openai_client, model_option, prompt):
     try: 
+        print(openai_client, model_option, prompt)
         openai_response = openai_client.chat.completions.create(
             model=model_option,
             messages= [

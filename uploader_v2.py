@@ -110,25 +110,27 @@ def format_data(bg_name, openai_client, path_container):
     mongodb_data = []
     try:
         for i in range(len(path_container)):
-            f = open(PARENT_DIR + '/' + bg_name + '/' + bg_name + '_page'+ str(i) +'.txt')
+            f = open(PARENT_DIR + '/' + bg_name + '/' + bg_name + '_page'+ str(i) +'.txt', encoding='utf8')
             current_text = f.read()
+            print(current_text)
             print("Length Check: " + bg_name + " page " + str(i) + ": " + str(len(current_text)))
-            if (len(current_text) > 6000):
-                # we need to do a split here where we split the page into halves until it is less than 6000
-                #  FUTURE TODO for bigger boardgame rules. right now this is just whatever until later 
-                print()
-            else:
+            # if (len(current_text) > 8000):
+            #     # we need to do a split here where we split the page into halves until it is less than 6000
+            #     #  FUTURE TODO for bigger boardgame rules. right now this is just whatever until later 
+            #     print()
+            # else:
                 # we just go ahead and do the embedding normally
-                response = openai_client.embeddings.create(
+            response = openai_client.embeddings.create(
                     input=current_text,
                     model=EMBEDDING_MODEL
-                )
-                embedding = response.data[0].embedding
-                bg_data = create_data(bg_name, current_text, embedding, path_container[i], i)
-                mongodb_data.append(bg_data)
+            )
+            embedding = response.data[0].embedding
+            bg_data = create_data(bg_name, current_text, embedding, path_container[i], i)
+            mongodb_data.append(bg_data)
 
         return mongodb_data
     except Exception as e:
+        print("error here :'(")
         print(e)
 
 def create_data(bg_name, rule_description, rule_embedding, image_path, page_number):
@@ -198,7 +200,7 @@ def generate_asset(bg_name='cascadia'):
 
 
     # need a delete data here to clean everything 
-    delete_folder(bg_name)
+    # delete_folder(bg_name)
 
     print("Finish: generate_asset " + bg_name)
 

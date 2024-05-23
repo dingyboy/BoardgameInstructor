@@ -88,7 +88,7 @@ if prompt := st.chat_input("What can I help you with?"):
 
         embedding = generate_embedding(openai_client)
 
-
+        print("hello world")
         boardgame_display_key = "display_name"
         boardgame_database_key = "database_name"
         boardgame_database_name = None
@@ -127,12 +127,16 @@ if prompt := st.chat_input("What can I help you with?"):
         print(image_url_list)
         # TODO: Need to check if gpt4o is enabled and if it is we need to fetch images and use them as part of the response 
         openai_response = None
+        print("hello world 2")
 
-        print(image_url_list[0])
+        # print('test',image_url_list[0])
+        print(st.session_state.enable_image_recognition)
         if st.session_state.enable_image_recognition:
             openai_response = request_with_image_response(openai_client, model_option, enhanced_prompt, image_url_list[0])
         else:
             openai_response = request_response(openai_client, model_option, enhanced_prompt)
+        print("hello world 3")
+
         print(openai_response)
         response = openai_response.choices[0].message.content
         with st.chat_message("assistant"):

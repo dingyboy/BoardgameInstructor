@@ -7,9 +7,13 @@
     {
         "database_name":"cascadia",
         "display_name": "Cascadia"
-    }
+    },
     {
         "database_name":"nemesis",
         "display_name": "Nemesis"
+    },
+    {
+        "database_name":"cosmic_encounter",
+        "display_name": "Cosmic Encounter"
     }
 ]
